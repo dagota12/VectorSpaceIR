@@ -93,10 +93,10 @@ def search_and_display(query, terms, doc_vectors, DF, N, docs):
         similarities.append((similarity, i))
     similarities.sort(reverse=True, key=lambda x: x[0])
 
-    print("\nDocuments sorted by relevance to the query:")
+    print("\nRelevalt documents:")
     for rank, (similarity, i) in enumerate(similarities):
         print(f"Rank {rank + 1} (match: {similarity:.2%}): {docs[i][0]}")
-
+#main driver program to run the code
 def main():
     directory_path = 'corpus'
     docs = load_corpus(directory_path)

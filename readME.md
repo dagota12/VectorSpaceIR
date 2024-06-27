@@ -6,6 +6,9 @@
 
 - this Program tries to show a simple vsm implementation
 - user can input the query and the program tries to find the relevant document that match the query.
+- using cosine simmilarity technique
+
+- it also builds index file which relates the term with their respective occured document
 
 ## How to run?
 
