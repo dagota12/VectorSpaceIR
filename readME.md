@@ -9,6 +9,11 @@
 - using cosine simmilarity technique
 
 - it also builds index file which relates the term with their respective occured document
+  - the index file is used to narrow down the search space of the documents
+
+### Note!!!
+
+- this version only displays the only the relevant ones which if found match
 
 ## How to run?
 
@@ -21,3 +26,9 @@ next simple ''/ just run `main.py` in terminal
 example:
 
 - `python main.py`
+
+## about us
+
+- ASTU(Adama Science and Enginnering students) CSE students
+
+# Thanks!
