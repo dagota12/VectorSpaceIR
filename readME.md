@@ -9,7 +9,11 @@
 
 ## How to run?
 
-simple ''/ just run `main.py` in terminal
+first thing is first u should have nltk installed
+
+    pip install nltk
+
+next simple ''/ just run `main.py` in terminal
 
 example:
 

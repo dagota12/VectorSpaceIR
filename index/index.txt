@@ -1,0 +1,10 @@
+age: Doc1.txt
+anyth: Doc2.txt
+danc: Doc2.txt
+era: Doc1.txt
+fun: Doc2.txt
+golden: Doc1.txt
+monkey: Doc2.txt
+prepar: Doc3.txt
+renaiss: Doc1.txt, Doc2.txt
+solomon: Doc3.txt

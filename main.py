@@ -1,12 +1,13 @@
 from nltk import PorterStemmer, download
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 from collections import defaultdict, Counter
 from math import sqrt, log2
 import string
 import os
 import glob
 
-# Download stopwords if needed
+# note for reader, Download stopwords if needed(or not downloaded yet)
 # download('stopwords')
 stop_words = set(stopwords.words('english'))
 
@@ -16,9 +17,7 @@ stemmer = PorterStemmer()
 def load_corpus(directory):
 
     text_files_content = []
-    text_files = glob.glob(f'{os.path.dirname(os.path.abspath(__file__))}/corpus/*.txt')
-    
-    print("Current Working Directory:", )
+    text_files = glob.glob(f'{os.path.dirname(os.path.abspath(__file__))}/{directory}/*.txt')
     for file_path in text_files:
         with open(file_path, 'r', encoding='utf-8') as file:
             content = file.read().replace('\n'," ")
@@ -26,31 +25,32 @@ def load_corpus(directory):
             text_files_content.append((os.path.basename(file_path), content))
     
     return text_files_content
-
-directory_path = 'corpus'
+#corpus directiory path
+directory_path = 'trial_corpus'
 
 docs = load_corpus(directory_path)
-print(docs)
-print("Documents:", docs)
-query = "i am inevitable!"
 
-# Preprocessing function
+# print("Documents:", docs)
+query = "The Renaissance"
+
+# tokenizing and some other function
 def tokenize(text):
     #remove any special charachers
-    special_chars = " .,!#$%^&*();:\n\t\\\"?!{}[]<>"
-    tokens = text.split()
+    special_chars = string.punctuation + string.whitespace
+    tokens = word_tokenize(text)
     tokens = [word.lower().strip(special_chars) for word in tokens if word not in stop_words and word not in string.punctuation]
+    #may be the stemming is making error on  the simmilarity measure
     tokens = [stemmer.stem(word) for word in tokens]
     return tokens
 
-# Preprocess documents and query
-preprocessed_docs = [(filename, tokenize(content)) for filename, content in docs]
-# print("Preprocessed Docs:", preprocessed_docs)
+# Preprocess documents and query by tokenizing
+tokenized_docs = [(filename, tokenize(content)) for filename, content in docs]
+# print("Preprocessed Docs:", tokenized_docs)
 preprocessed_query = tokenize(query)
-
+print(preprocessed_query)
 # Extract terms from preprocessed documents and query
 terms = set()
-for _, doc in preprocessed_docs:
+for _, doc in tokenized_docs:
     terms |= set(doc)
 terms |= set(preprocessed_query)
 # print("Terms:", terms)
@@ -60,7 +60,7 @@ TF = defaultdict(lambda: defaultdict(int))
 DF = defaultdict(int)
 
 # Calculate TF and DF
-for i, (_, doc) in enumerate(preprocessed_docs):
+for i, (_, doc) in enumerate(tokenized_docs):
     inc = defaultdict(int)
     for word in doc:
         if inc[word] == 0:
@@ -71,12 +71,28 @@ for i, (_, doc) in enumerate(preprocessed_docs):
 # print("TF:", dict(TF))
 # print("DF:", dict(DF))
 
+# index file
+term_to_docs = defaultdict(set)
+
+# Populate the dictionary
+for filename, tokens in tokenized_docs:
+    for token in tokens:
+        term_to_docs[token].add(filename)
+
+# Write the index to a file
+index_file_path = os.path.dirname(os.path.abspath(__file__)) + '/index/index.txt'
+os.makedirs(os.path.dirname(index_file_path), exist_ok=True)
+with open(index_file_path, 'w', encoding='utf-8') as index_file:
+    for term, doc_set in sorted(term_to_docs.items()):
+        index_file.write(f"{term}: {', '.join(sorted(doc_set))}\n")
+
+# print(f"Index file created at {index_file_path}")
 # Number of documents
 N = len(docs)
 
 # Calculate TF-IDF for documents
 doc_vectors = []
-for i, (_, doc) in enumerate(preprocessed_docs):
+for i, (_, doc) in enumerate(tokenized_docs):
     vector = []
     for term in terms:
         tf = TF[i][term]
@@ -114,5 +130,19 @@ similarities.sort(reverse=True, key=lambda x: x[0])
 
 # Display documents based on match
 print("\nDocuments sorted by relevance to the query:")
-for similarity, i in similarities:
-    print(f"Document {i} (Similarity: {similarity}): {docs[i][0]}")  # Display file name instead of content
+for rank,(similarity, i) in enumerate(similarities):
+    # print(idx,similarity,i)
+    print(f"Rank {rank+1} (match: {similarity:.2%}): {docs[i][0]}")  # Display file name
+def main():
+    query = input()
+    """
+    ## To do!
+    do TF(),DF(),IDF(),simmilariy()
+    and finally displaying the result
+    while not quit:
+        display menu
+            [q] ->[quit]
+            [s] ->[search]
+            otherwise ask again
+    -  
+    """
